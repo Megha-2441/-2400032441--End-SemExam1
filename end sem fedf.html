@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Drag & Drop Course List</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        max-width: 500px;
+        margin: auto;
+    }
+    h2 { margin-bottom: 10px; }
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+    li {
+        background: #f0f0f0;
+        margin: 6px 0;
+        padding: 10px;
+        cursor: move;
+        border-radius: 4px;
+    }
+    li.dragging {
+        opacity: 0.4;
+    }
+    #output {
+        margin-top: 20px;
+        padding: 10px;
+        background: #e8f7ff;
+        border-radius: 4px;
+        min-height: 40px;
+    }
+</style>
+</head>
+<body>
+
+<h2>Course List (Drag to Reorder)</h2>
+
+<ul id="courseList">
+    <li draggable="true">Mathematics</li>
+    <li draggable="true">Physics</li>
+    <li draggable="true">Chemistry</li>
+    <li draggable="true">Computer Science</li>
+    <li draggable="true">Biology</li>
+</ul>
+
+<button onclick="showOrder()">Show Updated Order</button>
+
+<div id="output"></div>
+
+<script>
+const list = document.getElementById("courseList");
+
+let draggedItem = null;
+
+list.addEventListener("dragstart", e => {
+    draggedItem = e.target;
+    e.target.classList.add("dragging");
+});
+
+list.addEventListener("dragend", e => {
+    e.target.classList.remove("dragging");
+});
+
+list.addEventListener("dragover", e => {
+    e.preventDefault();
+    const dragging = document.querySelector(".dragging");
+    const items = [...list.querySelectorAll("li:not(.dragging)")];
+    const afterItem = items.find(item => {
+        return e.clientY <= item.offsetTop + item.offsetHeight / 2;
+    });
+    if (afterItem) {
+        list.insertBefore(dragging, afterItem);
+    } else {
+        list.appendChild(dragging);
+    }
+});
+
+function showOrder() {
+    const items = document.querySelectorAll("#courseList li");
+    let order = [];
+    items.forEach(li => order.push(li.textContent));
+    document.getElementById("output").innerHTML =
+        "<strong>Updated Order:</strong><br>" + order.join("<br>");
+}
+</script>
+
+</body>
+</html>
